@@ -77,6 +77,14 @@ void redirect(int fd, char *path, int flag) {   // リダイレクト処理を�
   //        入力の場合 O_RDONLY
   //        出力の場合 O_WRONLY|O_TRUNC|O_CREAT
   //
+
+  close(fd);
+  int fd1 = open (path, flag, 0644);
+  if (fd1 < 0){
+    perror(path);
+    exit(1);
+  }
+
 }
 
 void externalCom(char *args[]) {                // 外部コマンドを実行する
@@ -85,7 +93,13 @@ void externalCom(char *args[]) {                // 外部コマンドを実行�
     perror("fork");                             //     fork 失敗
     exit(1);                                    //     非常事態，親を終了
   }
-  if (pid==0) {                                 //   子プロセスなら
+  if (pid==0) {  
+    if (ifile!=NULL) {                          //   子プロセスなら
+      redirect(0, ifile, O_RDONLY);
+    }
+    else if (ofile!=NULL) {
+      redirect(1, ofile, O_WRONLY|O_TRUNC|O_CREAT);
+    }               
     execvp(args[0], args);                      //     コマンドを実行
     perror(args[0]);
     exit(1);
@@ -130,3 +144,30 @@ int main() {
   return 0;
 }
 
+/*
+takemotoai@takemotoainoMacBook-Air kadai12-i21takemoto % make
+cc -D_GNU_SOURCE -Wall -std=c99 -o myshell myshell.c
+takemotoai@takemotoainoMacBook-Air kadai12-i21takemoto % ./myshell
+Command: ls
+Makefile	README.pdf	myshell.c
+README.md	myshell
+Command: ls > a.txt
+Command: cat < a.txt
+Makefile
+README.md
+README.pdf
+a.txt
+myshell
+myshell.c
+Command:  echo aaa > a.txt
+Command: cat a.txt
+aaa
+Command: echo bbb > a.txt
+Command: cat a.txt
+bbb
+Command: grep a < a.txt
+Command: grep b < a.txt
+bbb
+Command: cat < b.txt
+b.txt: No such file or directory
+*/
