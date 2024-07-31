@@ -96,10 +96,9 @@ void externalCom(char *args[]) {                // 外部コマンドを実行�
   if (pid==0) {  
     if (ifile!=NULL) {                          //   子プロセスなら
       redirect(0, ifile, O_RDONLY);
-    }
-    else if (ofile!=NULL) {
+    } if (ofile!=NULL) {
       redirect(1, ofile, O_WRONLY|O_TRUNC|O_CREAT);
-    }               
+    }
     execvp(args[0], args);                      //     コマンドを実行
     perror(args[0]);
     exit(1);
@@ -149,8 +148,7 @@ takemotoai@takemotoainoMacBook-Air kadai12-i21takemoto % make
 cc -D_GNU_SOURCE -Wall -std=c99 -o myshell myshell.c
 takemotoai@takemotoainoMacBook-Air kadai12-i21takemoto % ./myshell
 Command: ls
-Makefile	README.pdf	myshell.c
-README.md	myshell
+Makefile	README.md	README.pdf	myshell		myshell.c
 Command: ls > a.txt
 Command: cat < a.txt
 Makefile
@@ -159,7 +157,7 @@ README.pdf
 a.txt
 myshell
 myshell.c
-Command:  echo aaa > a.txt
+Command: echo aaa > a.txt
 Command: cat a.txt
 aaa
 Command: echo bbb > a.txt
@@ -170,4 +168,13 @@ Command: grep b < a.txt
 bbb
 Command: cat < b.txt
 b.txt: No such file or directory
+Command: ./prog abc > b.txt
+./prog: No such file or directory
+Command: chmod 000 a.txt
+Command: echo 123 > a.txt
+a.txt: Permission denied
+Command: cat < a.txt
+a.txt: Permission denied
+Command: 
+
 */
