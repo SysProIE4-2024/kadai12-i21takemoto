@@ -96,7 +96,8 @@ void externalCom(char *args[]) {                // 外部コマンドを実行�
   if (pid==0) {  
     if (ifile!=NULL) {                          //   子プロセスなら
       redirect(0, ifile, O_RDONLY);
-    } if (ofile!=NULL) {
+    }
+    if (ofile!=NULL) {
       redirect(1, ofile, O_WRONLY|O_TRUNC|O_CREAT);
     }
     execvp(args[0], args);                      //     コマンドを実行
